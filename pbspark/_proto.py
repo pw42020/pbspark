@@ -213,10 +213,10 @@ class MessageConverter:
 
         Args:
             message: The protocol buffers message instance to serialize.
-            always_print_fields_with_no_presence: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -337,10 +337,10 @@ class MessageConverter:
 
         Args:
             message_type: The message type for decoding.
-            always_print_fields_with_no_presence: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -378,10 +378,10 @@ class MessageConverter:
 
         Args:
             message_type: The message type for decoding.
-            always_print_fields_with_no_presence: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -421,10 +421,10 @@ class MessageConverter:
 
         Args:
             message_type: The message type for decoding.
-            always_print_fields_with_no_presence: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -544,10 +544,10 @@ class MessageConverter:
         Args:
             df: A pyspark dataframe with encoded protobuf in the column at index 0.
             message_type: The message type for decoding.
-            always_print_fields_with_no_presence: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -628,10 +628,10 @@ def from_protobuf(
     Args:
         data: A pyspark column.
         message_type: The message type for decoding.
-        always_print_fields_with_no_presence: If True, singular primitive fields,
-            repeated fields, and map fields will always be serialized.  If
-            False, only serialize non-empty fields.  Singular message fields
-            and oneof fields are not affected by this option.
+        including_default_value_fields and always_print_fields_with_no_presence: If True,
+            singular primitive fields, repeated fields, and map fields will always
+            be serialized.  If False, only serialize non-empty fields.  Singular
+            message fields and one of fields are not affected by this option.
         preserving_proto_field_name: If True, use the original proto field
             names as defined in the .proto file. If False, convert the field
             names to lowerCamelCase.
@@ -697,10 +697,10 @@ def df_from_protobuf(
     Args:
         df: A pyspark dataframe with encoded protobuf in the column at index 0.
         message_type: The message type for decoding.
-        always_print_fields_with_no_presence: If True, singular primitive fields,
-            repeated fields, and map fields will always be serialized.  If
-            False, only serialize non-empty fields.  Singular message fields
-            and oneof fields are not affected by this option.
+        including_default_value_fields and always_print_fields_with_no_presence: If True,
+            singular primitive fields, repeated fields, and map fields will always
+            be serialized.  If False, only serialize non-empty fields.  Singular
+            message fields and one of fields are not affected by this option.
         preserving_proto_field_name: If True, use the original proto field
             names as defined in the .proto file. If False, convert the field
             names to lowerCamelCase.
