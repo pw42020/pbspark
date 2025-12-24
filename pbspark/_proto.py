@@ -203,6 +203,7 @@ class MessageConverter:
         self,
         message: Message,
         including_default_value_fields: bool = False,
+        always_print_fields_with_no_presence: bool = False,
         preserving_proto_field_name: bool = False,
         use_integers_for_enums: bool = False,
         descriptor_pool: t.Optional[DescriptorPool] = None,
@@ -212,10 +213,10 @@ class MessageConverter:
 
         Args:
             message: The protocol buffers message instance to serialize.
-            including_default_value_fields: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -224,13 +225,22 @@ class MessageConverter:
                 default.
             float_precision: If set, use this to specify float field valid digits.
         """
-        printer = _Printer(
+        printer_kwargs = dict(
             custom_serializers=self._custom_serializers,
-            including_default_value_fields=including_default_value_fields,
             preserving_proto_field_name=preserving_proto_field_name,
             use_integers_for_enums=use_integers_for_enums,
             descriptor_pool=descriptor_pool,
             float_precision=float_precision,
+        )
+        # protobuf versions >=3.20.0,<5.26.1
+        if including_default_value_fields:
+            printer_kwargs.update({"including_default_value_fields": including_default_value_fields})
+        # protobuf version >=5.26.1
+        elif always_print_fields_with_no_presence:
+            printer_kwargs.update({"always_print_fields_with_no_presence": always_print_fields_with_no_presence})
+        
+        printer = _Printer(
+            **printer_kwargs
         )
         return printer._MessageToJsonObject(message=message)
 
@@ -315,6 +325,7 @@ class MessageConverter:
         self,
         message_type: t.Type[Message],
         including_default_value_fields: bool = False,
+        always_print_fields_with_no_presence: bool = False,
         preserving_proto_field_name: bool = False,
         use_integers_for_enums: bool = False,
         float_precision: t.Optional[int] = None,
@@ -326,10 +337,10 @@ class MessageConverter:
 
         Args:
             message_type: The message type for decoding.
-            including_default_value_fields: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -343,6 +354,7 @@ class MessageConverter:
             return self.message_to_dict(
                 message_type.FromString(s),
                 including_default_value_fields=including_default_value_fields,
+                always_print_fields_with_no_presence=always_print_fields_with_no_presence,
                 preserving_proto_field_name=preserving_proto_field_name,
                 use_integers_for_enums=use_integers_for_enums,
                 float_precision=float_precision,
@@ -354,6 +366,7 @@ class MessageConverter:
         self,
         message_type: t.Type[Message],
         including_default_value_fields: bool = False,
+        always_print_fields_with_no_presence: bool = False,
         preserving_proto_field_name: bool = False,
         use_integers_for_enums: bool = False,
         float_precision: t.Optional[int] = None,
@@ -365,10 +378,10 @@ class MessageConverter:
 
         Args:
             message_type: The message type for decoding.
-            including_default_value_fields: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -379,6 +392,7 @@ class MessageConverter:
             self.get_decoder(
                 message_type=message_type,
                 including_default_value_fields=including_default_value_fields,
+                always_print_fields_with_no_presence=always_print_fields_with_no_presence,
                 preserving_proto_field_name=preserving_proto_field_name,
                 use_integers_for_enums=use_integers_for_enums,
                 float_precision=float_precision,
@@ -395,6 +409,7 @@ class MessageConverter:
         data: t.Union[Column, str],
         message_type: t.Type[Message],
         including_default_value_fields: bool = False,
+        always_print_fields_with_no_presence: bool = False,
         preserving_proto_field_name: bool = False,
         use_integers_for_enums: bool = False,
         float_precision: t.Optional[int] = None,
@@ -406,10 +421,10 @@ class MessageConverter:
 
         Args:
             message_type: The message type for decoding.
-            including_default_value_fields: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -420,6 +435,7 @@ class MessageConverter:
         protobuf_decoder_udf = self.get_decoder_udf(
             message_type=message_type,
             including_default_value_fields=including_default_value_fields,
+            always_print_fields_with_no_presence=always_print_fields_with_no_presence,
             preserving_proto_field_name=preserving_proto_field_name,
             use_integers_for_enums=use_integers_for_enums,
             float_precision=float_precision,
@@ -517,6 +533,7 @@ class MessageConverter:
         df: DataFrame,
         message_type: t.Type[Message],
         including_default_value_fields: bool = False,
+        always_print_fields_with_no_presence: bool = False,
         preserving_proto_field_name: bool = False,
         use_integers_for_enums: bool = False,
         float_precision: t.Optional[int] = None,
@@ -527,10 +544,10 @@ class MessageConverter:
         Args:
             df: A pyspark dataframe with encoded protobuf in the column at index 0.
             message_type: The message type for decoding.
-            including_default_value_fields: If True, singular primitive fields,
-                repeated fields, and map fields will always be serialized.  If
-                False, only serialize non-empty fields.  Singular message fields
-                and oneof fields are not affected by this option.
+            including_default_value_fields and always_print_fields_with_no_presence: If True,
+                singular primitive fields, repeated fields, and map fields will always
+                be serialized.  If False, only serialize non-empty fields.  Singular
+                message fields and one of fields are not affected by this option.
             preserving_proto_field_name: If True, use the original proto field
                 names as defined in the .proto file. If False, convert the field
                 names to lowerCamelCase.
@@ -545,6 +562,7 @@ class MessageConverter:
                 data=df.columns[0],
                 message_type=message_type,
                 including_default_value_fields=including_default_value_fields,
+                always_print_fields_with_no_presence=always_print_fields_with_no_presence,
                 preserving_proto_field_name=preserving_proto_field_name,
                 use_integers_for_enums=use_integers_for_enums,
                 float_precision=float_precision,
@@ -599,6 +617,7 @@ def from_protobuf(
     data: t.Union[Column, str],
     message_type: t.Type[Message],
     including_default_value_fields: bool = False,
+    always_print_fields_with_no_presence: bool = False,
     preserving_proto_field_name: bool = False,
     use_integers_for_enums: bool = False,
     float_precision: t.Optional[int] = None,
@@ -609,10 +628,10 @@ def from_protobuf(
     Args:
         data: A pyspark column.
         message_type: The message type for decoding.
-        including_default_value_fields: If True, singular primitive fields,
-            repeated fields, and map fields will always be serialized.  If
-            False, only serialize non-empty fields.  Singular message fields
-            and oneof fields are not affected by this option.
+        including_default_value_fields and always_print_fields_with_no_presence: If True,
+            singular primitive fields, repeated fields, and map fields will always
+            be serialized.  If False, only serialize non-empty fields.  Singular
+            message fields and one of fields are not affected by this option.
         preserving_proto_field_name: If True, use the original proto field
             names as defined in the .proto file. If False, convert the field
             names to lowerCamelCase.
@@ -625,6 +644,7 @@ def from_protobuf(
         data=data,
         message_type=message_type,
         including_default_value_fields=including_default_value_fields,
+        always_print_fields_with_no_presence=always_print_fields_with_no_presence,
         preserving_proto_field_name=preserving_proto_field_name,
         use_integers_for_enums=use_integers_for_enums,
         float_precision=float_precision,
@@ -665,6 +685,7 @@ def df_from_protobuf(
     df: DataFrame,
     message_type: t.Type[Message],
     including_default_value_fields: bool = False,
+    always_print_fields_with_no_presence: bool = False,
     preserving_proto_field_name: bool = False,
     use_integers_for_enums: bool = False,
     float_precision: t.Optional[int] = None,
@@ -676,10 +697,10 @@ def df_from_protobuf(
     Args:
         df: A pyspark dataframe with encoded protobuf in the column at index 0.
         message_type: The message type for decoding.
-        including_default_value_fields: If True, singular primitive fields,
-            repeated fields, and map fields will always be serialized.  If
-            False, only serialize non-empty fields.  Singular message fields
-            and oneof fields are not affected by this option.
+        including_default_value_fields and always_print_fields_with_no_presence: If True,
+            singular primitive fields, repeated fields, and map fields will always
+            be serialized.  If False, only serialize non-empty fields.  Singular
+            message fields and one of fields are not affected by this option.
         preserving_proto_field_name: If True, use the original proto field
             names as defined in the .proto file. If False, convert the field
             names to lowerCamelCase.
@@ -695,6 +716,7 @@ def df_from_protobuf(
         df=df,
         message_type=message_type,
         including_default_value_fields=including_default_value_fields,
+        always_print_fields_with_no_presence=always_print_fields_with_no_presence,
         preserving_proto_field_name=preserving_proto_field_name,
         use_integers_for_enums=use_integers_for_enums,
         float_precision=float_precision,

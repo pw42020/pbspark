@@ -101,7 +101,7 @@ def expanded(request):
 
 
 @pytest.fixture(params=[True, False])
-def including_default_value_fields(request):
+def always_print_fields_with_no_presence(request):
     return request.param
 
 
@@ -386,7 +386,7 @@ def test_df_to_from_protobuf(example, spark, expanded):
     assert df.collect() == df_encoded.collect()
 
 
-def test_including_default_value_fields(spark, including_default_value_fields):
+def test_always_print_fields_with_no_presence(spark, always_print_fields_with_no_presence):
     example = ExampleMessage(string="asdf")
     data = [{"value": example.SerializeToString()}]
 
@@ -396,14 +396,13 @@ def test_including_default_value_fields(spark, including_default_value_fields):
         df=df,
         message_type=ExampleMessage,
         expanded=True,
-        including_default_value_fields=including_default_value_fields,
+        always_print_fields_with_no_presence=always_print_fields_with_no_presence,
     )
     data = df_decoded.collect()
-    if including_default_value_fields:
+    if always_print_fields_with_no_presence:
         assert data[0].asDict(True)["int32"] == 0
     else:
         assert data[0].asDict(True)["int32"] is None
-
 
 def test_use_integers_for_enums(spark, use_integers_for_enums):
     example = ExampleMessage(enum=ExampleMessage.SomeEnum.first)
